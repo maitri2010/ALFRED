@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Alfred - Academic Assistant</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0d1117;
+      color: #eee;
+      text-align: center;
+    }
+    h1 { color: cyan; text-shadow: 0 0 20px cyan; }
+
+    .chat-box {
+      width: 70%;
+      margin: auto;
+      height: 400px;
+      overflow-y: auto;
+      border: 2px solid cyan;
+      padding: 10px;
+      background: #161b22;
+      border-radius: 10px;
+    }
+    .message { margin: 8px 0; padding: 8px; border-radius: 8px; max-width: 70%; }
+    .user { background: #238636; margin-left: auto; color: white; }
+    .bot  { background: #30363d; margin-right: auto; color: cyan; }
+
+    input[type=text] {
+      width: 60%; padding: 10px; border: none;
+      border-radius: 5px; outline: none;
+    }
+    button {
+      background: cyan; border: none; color: black;
+      padding: 10px 15px; margin: 5px;
+      border-radius: 20px;
+      cursor: pointer; font-weight: bold;
+      box-shadow: 0 0 15px cyan;
+    }
+    button:hover { background: #00e6e6; }
+  </style>
+</head>
+<body>
+  <h1>Alfred - Academic Assistant</h1>
+
+  <div class="chat-box">
+    {% for msg in messages %}
+      <div class="message {{msg.sender}}">{{msg.sender.title()}}: {{msg.text}}</div>
+    {% endfor %}
+  </div>
+
+  <form action="/chat" method="post" style="margin-top:15px;">
+    <input type="text" name="message" placeholder="Type your command..." required>
+    <button type="submit">Send</button>
+  </form>
+
+  <button onclick="window.location.href='/listen'">🎤 Voice Command (Server)</button>
+  <button onclick="startRecognition()">🎙 Speak (Browser)</button>
+
+  <script>
+    function startRecognition() {
+      if (!('webkitSpeechRecognition' in window)) {
+        alert("Speech recognition not supported!");
+        return;
+      }
+      const recognition = new webkitSpeechRecognition();
+      recognition.lang = "en-US";
+      recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        document.querySelector("input[name='message']").value = transcript;
+      };
+      recognition.start();
+    }
+  </script>
+</body>
+</html>
